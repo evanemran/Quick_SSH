@@ -29,7 +29,6 @@
 
         <EditText
             android:id="@+id/host_field"
-            android:text="128.199.180.160"
             android:fontFamily="@font/custom_font_medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -62,7 +61,6 @@
 
         <EditText
             android:id="@+id/username_field"
-            android:text="root"
             android:fontFamily="@font/custom_font_medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -78,7 +76,6 @@
 
         <EditText
             android:id="@+id/password_field"
-            android:text="0A2198evan"
             android:fontFamily="@font/custom_font_medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
