@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">Quick SSH</string>
+    <string name="host">Host</string>
+    <string name="port">Port</string>
+    <string name="defaultPort">22</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="button_send">CONNECT</string>
+    <string name="system_log" tools:ignore="ExtraTranslation">System log:</string>
+</resources>
