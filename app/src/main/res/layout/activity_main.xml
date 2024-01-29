@@ -19,6 +19,7 @@
         <TextView
             android:text="Quick SSH"
             android:textColor="@color/primary"
+            android:fontFamily="@font/custom_font_bold"
             android:textSize="40sp"
             android:textStyle="bold"
             android:textAlignment="center"
@@ -28,6 +29,8 @@
 
         <EditText
             android:id="@+id/host_field"
+            android:text="128.199.180.160"
+            android:fontFamily="@font/custom_font_medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -37,11 +40,12 @@
             android:hint="@string/host"
             android:inputType="textPersonName"
             android:padding="10dp"
-            android:textColor="@color/black"
+            android:textColor="@color/primary"
             android:textColorHint="@color/grey"/>
 
         <EditText
             android:id="@+id/port_field"
+            android:fontFamily="@font/custom_font_medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
@@ -52,12 +56,14 @@
             android:hint="@string/port"
             android:inputType="textPersonName"
             android:padding="10dp"
-            android:textColor="@color/black"
+            android:textColor="@color/primary"
             android:textColorHint="@color/grey"
             tools:text="@string/defaultPort" />
 
         <EditText
             android:id="@+id/username_field"
+            android:text="root"
+            android:fontFamily="@font/custom_font_medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
@@ -67,11 +73,13 @@
             android:hint="@string/username"
             android:inputType="textPersonName"
             android:padding="10dp"
-            android:textColor="@color/black"
+            android:textColor="@color/primary"
             android:textColorHint="@color/grey"/>
 
         <EditText
             android:id="@+id/password_field"
+            android:text="0A2198evan"
+            android:fontFamily="@font/custom_font_medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
@@ -81,11 +89,12 @@
             android:hint="@string/password"
             android:inputType="textPassword"
             android:padding="10dp"
-            android:textColor="@color/black"
+            android:textColor="@color/primary"
             android:textColorHint="@color/grey"/>
 
         <Button
             android:id="@+id/button"
+            android:fontFamily="@font/custom_font_bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -93,6 +102,7 @@
             android:onClick="authenticate"
             android:layout_marginTop="32dp"
             android:text="@string/button_send"
+            android:textSize="18sp"
             android:textColor="@android:color/background_light"
             tools:text="@string/button_send" />
     </LinearLayout>

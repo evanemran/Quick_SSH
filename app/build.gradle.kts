@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id ("kotlin-kapt")
 }
 
 android {
@@ -73,6 +74,9 @@ dependencies {
     implementation ("org.apache.sshd:sshd-common:2.1.0") {
         exclude(group = "META-INF", module = "DEPENDENCIES")
     }
+
+    implementation ("androidx.room:room-runtime:2.4.3")
+    kapt ("androidx.room:room-compiler:2.4.3")
 
     implementation ("org.slf4j:slf4j-api:1.7.5")
 

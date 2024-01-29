@@ -1,14 +1,28 @@
 package com.evanemran.quickssh
 
 import android.content.Context
+import android.graphics.Paint
+import android.graphics.Typeface
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.TextPaint
+import android.text.style.TypefaceSpan
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import com.evanemran.quickssh.databinding.ActivitySshBinding
+import com.evanemran.quickssh.dialog.CommandListener
+import com.evanemran.quickssh.dialog.CommandsDialog
+import com.evanemran.quickssh.localdb.RoomDb
+import com.evanemran.quickssh.model.SshCommand
 import com.evanemran.quickssh.model.SshUser
 import org.apache.sshd.client.SshClient
 import org.apache.sshd.client.channel.ClientChannelEvent
@@ -20,11 +34,12 @@ import java.util.EnumSet
 import java.util.concurrent.TimeUnit
 
 
-class SshActivity : AppCompatActivity() {
+class SshActivity : AppCompatActivity(), CommandListener {
 
     lateinit var binding: ActivitySshBinding
     lateinit var user: SshUser
     private var sshSession: ClientSession? = null
+    var database: RoomDb? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -32,6 +47,26 @@ class SshActivity : AppCompatActivity() {
         binding = ActivitySshBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        database = RoomDb.getInstance(this)
+
+        setSupportActionBar(binding.appBar)
+
+        val customTypeface: Typeface? =
+            ResourcesCompat.getFont(this, R.font.custom_font_bold)
+
+        if (customTypeface != null) {
+            val title = getString(R.string.terminal)
+            val spannableString = SpannableString(title)
+            spannableString.setSpan(
+                CustomTypefaceSpan(customTypeface),
+                0,
+                title.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+
+            supportActionBar?.title = spannableString
+        }
 
         binding.progressbar.visibility = View.VISIBLE
 
@@ -55,6 +90,10 @@ class SshActivity : AppCompatActivity() {
             binding.progressbar.visibility = View.VISIBLE
             command = binding.commandLine.text.toString()+"\n"
             executeCommand(command, client, binding.terminal)
+            val command = SshCommand()
+            command.command = binding.commandLine.text.toString()
+            command.time = "Now"
+            database?.mainDAO()?.insertCommand(command)
             binding.commandLine.setText("")
         }
     }
@@ -113,5 +152,43 @@ class SshActivity : AppCompatActivity() {
 
     private fun runCommandOnUiThread(action: () -> Unit) {
         Handler(Looper.getMainLooper()).post(action)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val id = item.itemId
+
+        if(id==R.id.action_commands) {
+//            Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show()
+            val commandsDialog = CommandsDialog(this, this)
+            commandsDialog.show(supportFragmentManager, "command")
+            return true
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCommandClicked(command: SshCommand) {
+        runCommandOnUiThread {
+            binding.commandLine.setText(command.command)
+        }
+    }
+
+    private class CustomTypefaceSpan(private val typeface: Typeface) : TypefaceSpan("") {
+        override fun updateDrawState(ds: TextPaint) {
+            applyCustomTypeFace(ds, typeface)
+        }
+
+        override fun updateMeasureState(p: TextPaint) {
+            applyCustomTypeFace(p, typeface)
+        }
+
+        private fun applyCustomTypeFace(paint: Paint, tf: Typeface) {
+            paint.typeface = tf
+        }
     }
 }
