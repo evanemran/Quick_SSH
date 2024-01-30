@@ -87,14 +87,16 @@ class SshActivity : AppCompatActivity(), CommandListener {
 
 
         binding.run.setOnClickListener {
-            binding.progressbar.visibility = View.VISIBLE
-            command = binding.commandLine.text.toString()+"\n"
-            executeCommand(command, client, binding.terminal)
-            val command = SshCommand()
-            command.command = binding.commandLine.text.toString()
-            command.time = "Now"
-            database?.mainDAO()?.insertCommand(command)
-            binding.commandLine.setText("")
+            if(binding.commandLine.text.toString().isNotEmpty()) {
+                binding.progressbar.visibility = View.VISIBLE
+                command = binding.commandLine.text.toString()+"\n"
+                executeCommand(command, client, binding.terminal)
+                val command = SshCommand()
+                command.command = binding.commandLine.text.toString()
+                command.time = "Now"
+                database?.mainDAO()?.insertCommand(command)
+                binding.commandLine.setText("")
+            }
         }
     }
 
