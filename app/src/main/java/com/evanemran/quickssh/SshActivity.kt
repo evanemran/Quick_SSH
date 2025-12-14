@@ -25,6 +25,7 @@ import com.evanemran.quickssh.localdb.RoomDb
 import com.evanemran.quickssh.model.SshCommand
 import com.evanemran.quickssh.model.SshUser
 import org.apache.sshd.client.SshClient
+import org.apache.sshd.client.channel.ClientChannel
 import org.apache.sshd.client.channel.ClientChannelEvent
 import org.apache.sshd.client.session.ClientSession
 import org.apache.sshd.common.channel.Channel
@@ -40,6 +41,8 @@ class SshActivity : AppCompatActivity(), CommandListener {
     lateinit var user: SshUser
     private var sshSession: ClientSession? = null
     var database: RoomDb? = null
+    // Keep-Alive Interval (in milliseconds)
+    private val keepAliveInterval = 30_000L // 30 seconds
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -100,6 +103,29 @@ class SshActivity : AppCompatActivity(), CommandListener {
         }
     }
 
+    private fun sendKeepAlive() {
+        Thread {
+            while (sshSession?.isOpen == true) {
+                try {
+                    sshSession?.createChannel(ClientChannel.CHANNEL_SHELL).use { channel ->
+                        channel!!.open().verify(5, TimeUnit.SECONDS)
+
+                        // Send a harmless command to keep the session alive
+                        channel.invertedIn.use { pipedIn ->
+                            pipedIn.write("echo keep-alive\n".toByteArray())
+                            pipedIn.flush()
+                        }
+
+                        channel.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), TimeUnit.SECONDS.toMillis(5))
+                    }
+                    Thread.sleep(keepAliveInterval)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }.start()
+    }
+
     private fun executeCommand(command: String, client: SshClient, terminalTextView: TextView) {
         val thread = Thread {
             try {
@@ -110,6 +136,8 @@ class SshActivity : AppCompatActivity(), CommandListener {
                     sshSession!!.addPasswordIdentity(user.password)
                     sshSession!!.auth().verify(50000)
                     println("Connection Established")
+
+                    sendKeepAlive()
                 }
 
                 // Create a channel within the existing session
